@@ -19,9 +19,8 @@ app.get('/msg',(req,res) => {
 
     const start = async()=> {
         try{
-            console.log(process.env.DB_USER)
             await sequelize.authenticate()
-            await todo.sync({alter:true}) //либо синхронизация всех моделей await sequelize.sync({force: true})
+            await sequelize.sync({alter:true}) //либо синхронизация всех моделей await sequelize.sync({force: true})
             console.log('Connection has been established successfully');
             app.listen(PORT,() => console.log(`Server start on ${PORT}`))
         }

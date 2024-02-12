@@ -1,40 +1,51 @@
-const {todo}=require('../db/tables')
+const {ToDo} = require('../db/tables')
 
 class List{
     async get_done(req,res){
-        const done=await todo.findAll({
+        const done=await ToDo.findAll({
             where:{
-                isDone:true
+                isDone:true,
+                id:req.user.id
             }
         })
         res.json(done)
     }
     async get_undone(req,res){
-        const undone=await todo.findAll({
+        const undone=await ToDo.findAll({
             where:{
-                isDone:false
+                isDone:false,
+                id:req.user.id
             }
         })
         res.json(undone)
     }
     async get_done_first(req,res){
-        const done_first = await todo.findAll({
+        const done_first = await ToDo.findAll({
+            where:{
+                id:req.user.id
+            },
             order:[
-                ["isDone","DESC"]
+                ["isDone","DESC"] //сначала true
             ]
         })
         res.json(done_first)
     }
     async get_undone_first(req,res){
-        const undone_first = await todo.findAll({
+        const undone_first = await ToDo.findAll({
+            where:{
+                id:req.user.id
+            },
             order:[
-                ["isDone","ASC"]
+                ["isDone","ASC"] //сначала false
             ]
         })
         res.json(undone_first)
     }
     async get_new(req,res){
-        const new_first = await todo.findAll({
+        const new_first = await ToDo.findAll({
+            where:{
+                id:req.user.id
+            },
             order:[
                 ["createdAt","DESC"] //самый свежий задача
             ]
@@ -42,7 +53,10 @@ class List{
         res.json(new_first)
     }
     async get_old(req,res){
-        const old_first=await todo.findAll({
+        const old_first=await ToDo.findAll({
+            where:{
+                id:req.user.id
+            },
             order:[
                 ["createdAt","ASC"]  //самый старый задача
             ]

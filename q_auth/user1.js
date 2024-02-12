@@ -36,7 +36,7 @@ class Authorization{
         if(!user){
             return next(ApiError.internal('Пользователь не найден'))
         }
-        let comparePassword = bcrypt.compareSync(passwd, user.passwd)
+        let comparePassword = bcrypt.compareSync(passwd, user.password)
         if(!comparePassword){
             return next(ApiError.internal("Указан неверный пароль"))
         }
