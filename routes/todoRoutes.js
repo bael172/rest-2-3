@@ -9,10 +9,10 @@ const role = require('../check/roleCheck')
 
 router.post('/create',token,query.create_todo)
 router.get('/all',role,query.get_all_todo)
-router.get('/all_userid/:id1',role,query.get_all_userid)
-router.get('/id/:id1',token,query.get_todo_id)
+router.get('/all_id/:id',token,query.get_all_byid)
+router.get('/one_id/:id1',token,query.get_one_byid)
 router.patch('/upd_id/:id1',token,query.update_todo_id)
-router.delete('/del_id',token,query.delete_todo_id)
+router.delete('/del_id/:id1',token,query.delete_todo_id)
 router.delete('/del_all',role,query.delete_todo_all)
 
 router.get('/get_done',token,list.get_done)

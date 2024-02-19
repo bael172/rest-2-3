@@ -13,7 +13,7 @@ const first_task = ToDo.create({
 class Queries {
     async create_todo(req,res){
         const {title,description,isDone}=req.body
-        const task=await ToDo.create({
+        const task = await ToDo.create({
             title:title,
             description:description,
             isDone:isDone,
@@ -22,71 +22,91 @@ class Queries {
         return res.json(task)
     }
     async get_all_todo(req,res){
-        const todos=await ToDo.findAll()
-        return res.json(todos)
+        const todos = await ToDo.findAll()
+        if(!todos) res.status("There're no todos")
+        else return res.json(todos)
     }
-    async get_all_userid(req,res){
-        const todos=await ToDo.findAll({
+    async get_all_byid(req,res){
+        const verify = await ToDo.findAll({
             where:{
-                id:req.params.id
+                userId:req.user.id
             }
         })
-    }
-    async get_todo_id(req,res){
-        const todos=await ToDo.findAll({
-            where:{
-                [Op.and]:[
-                    {id:req.user.id},
-                    {id:req.params.id1}
-                ]
-            }
-        })
-        return res.json(todos)
-    }
-    async update_todo_id(req,res){
-        const {title,description,isDone}=req.body
-            const todos = await ToDo.findOne({
-                id:req.params.id1
-            })
-            return res.json(todos)
-            if (todos == undefined){
-                return res.json({message:"table not select"})
-            }
-            //res.status(401).json({message:"Попытка обновить несуществующую запись todo"})
-            if(todos.userId!==req.user.id) res.status(401).json({message:"Попытка обновить запись другого пользователя"})
-            await ToDo.update({
-                title:title,
-                description:description,
-                isDone:isDone,
+        if(verify){
+            const todos = verify.findAll({
                 where:{
-                    [Op.and]:[
-                        {id:req.params.id1},
-                        {userId:req.user.id}
-                    ]
+                    id:req.params.id
                 }
             })
             return res.json(todos)
+        }
+        else return res.status("Вы не создали ни одной записи")
 
     }
+    async get_one_byid(req,res){
+        const verify = await ToDo.findAll({
+            where:{
+                userId:req.user.id
+            }
+        })
+        if(verify){
+            const todos = verify.findOne({
+                where:{
+                    id:req.params.id1
+                }
+            })
+            return res.json(todos)
+        }
+        else return res.status("Вы не создали ни одной записи")
+        
+    }
+    async update_todo_id(req,res){
+        const {title,description,isDone}=req.body
+            const my_todo = await ToDo.findOne({
+                userId:req.user.id
+            })
+            if(my){
+                const updated = my_todo.update({
+                    title:title,
+                    description:description,
+                    isDone:isDone,
+                    where:{
+                        [Op.and]:[
+                            {id:req.params.id1},
+                            {userId:req.user.id}
+                        ]
+                    }
+                })
+                return res.json(updated)
+            }
+            else return res.json({message:"Вы не создали ни одной записи"})
+        }
     async delete_todo_id(req,res){
-        ToDo.destroy({
+        const check=await ToDo.findOne({
             where:{
-                id:req.user.id
+                userId:req.user.id
             }
         })
-        const todos=await ToDo.findOne({
-            where:{
-                id:req.user.id
-            }
-        })
-        return res.json("Запись удалена:"+todos)
+        if(check){
+            ToDo.destroy({
+                where:{
+                    id:req.params.id1
+                }
+            })
+            return res.json("Запись удалена")
+        }   
+        else return res.status("У вас нет ни одной записи")
+        
     }
     async delete_todo_all(req,res){
-        ToDo.destroy({
-            truncate:true
-        })
+        let answ = confirm("Вы уверены что хотите опустошить таблицу todo?")
+        if(answ){
+            ToDo.destroy({
+                truncate:true
+            })
+        }
         const todos=await ToDo.findAll()
-        return res.json(todos)
+        return res.json("Таблица опустошена:" + todos)
     }
 }
 

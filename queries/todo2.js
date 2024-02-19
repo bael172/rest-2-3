@@ -1,67 +1,107 @@
 const {ToDo} = require('../db/tables')
 
 class List{
-    async get_done(req,res){
-        const done=await ToDo.findAll({
+    async my_todos(req,res){
+        const my_todos = await ToDo.findAll({
             where:{
-                isDone:true,
-                id:req.user.id
+                userId:req.user.id
             }
         })
-        res.json(done)
+        return my_todos
+    }
+    async get_done(req,res){
+        try{
+            const done = my_todos().findAll({
+                where:{
+                    isDone:true,
+                }
+            })
+            return res.json(done)
+        }
+        catch(e){
+            res.status("У вас нет записей")
+        }
+
     }
     async get_undone(req,res){
-        const undone=await ToDo.findAll({
-            where:{
-                isDone:false,
-                id:req.user.id
-            }
-        })
-        res.json(undone)
+        try{
+            const undone = my_todos().findAll({
+                where:{
+                    isDone:false,
+                }
+            })
+            return res.json(undone)
+        }
+        catch(e){
+            res.status("У вас нет записей")
+        }
     }
     async get_done_first(req,res){
-        const done_first = await ToDo.findAll({
-            where:{
-                id:req.user.id
-            },
-            order:[
-                ["isDone","DESC"] //сначала true
-            ]
-        })
-        res.json(done_first)
+        try{
+            const done_first = my_todos().findAll({
+                where:{
+                    id:req.user.id
+                },
+                order:[
+                    ["isDone","DESC"] //сначала true
+                ]
+            })
+            return res.json(done_first)
+        }
+        catch(e){
+            res.status("У вас нет записей")
+        }
     }
+
     async get_undone_first(req,res){
-        const undone_first = await ToDo.findAll({
-            where:{
-                id:req.user.id
-            },
-            order:[
-                ["isDone","ASC"] //сначала false
-            ]
-        })
-        res.json(undone_first)
+        try{
+            const undone_first = my_todos().findAll({
+                where:{
+                    id:req.user.id
+                },
+                order:[
+                    ["isDone","ASC"] //сначала false
+                ]
+            })
+            res.json(undone_first)
+        }
+        catch(e){
+            res.status("У вас нет записей")
+        }
     }
+
     async get_new(req,res){
-        const new_first = await ToDo.findAll({
-            where:{
-                id:req.user.id
-            },
-            order:[
-                ["createdAt","DESC"] //самый свежий задача
-            ]
-        })
-        res.json(new_first)
+        try{
+            const new_first = my_todos().findAll({
+                where:{
+                    id:req.user.id
+                },
+                order:[
+                    ["createdAt","DESC"] //самый свежий задача
+                ]
+            })
+            return res.json(new_first)
+        }
+        catch(e){
+            res.status("У вас нет записей")
+        }
     }
+
     async get_old(req,res){
-        const old_first=await ToDo.findAll({
-            where:{
-                id:req.user.id
-            },
-            order:[
-                ["createdAt","ASC"]  //самый старый задача
-            ]
-        })
-        res.json(old_first)
+        try{
+            const old_first = this.my_todos.findAll({
+                where:{
+                    id:req.user.id
+                },
+                order:[
+                    ["createdAt","ASC"]  //самый старый задача
+                ]
+            })
+            return res.json(old_first)
+        }
+        catch(e){
+            res.status("У вас нет записей")
+        }
     }
 }
 
