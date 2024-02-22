@@ -9,6 +9,7 @@ class List{
         })
         return my_todos
     }
+
     async get_done(req,res){
         try{
             const done = my_todos().findAll({
@@ -21,8 +22,8 @@ class List{
         catch(e){
             res.status("У вас нет записей")
         }
-
     }
+
     async get_undone(req,res){
         try{
             const undone = my_todos().findAll({
@@ -36,6 +37,7 @@ class List{
             res.status("У вас нет записей")
         }
     }
+
     async get_done_first(req,res){
         try{
             const done_first = my_todos().findAll({

@@ -1,4 +1,5 @@
 const {User} = require('../db/tables')
+const jwt = require('jsonwebtoken')
 
 const generateJwt = (id,login,role) => {
     return jwt.sign(
@@ -9,6 +10,7 @@ const generateJwt = (id,login,role) => {
 }
 
 class Functions{
+    /*
     async create_user(req,res){
         const {id,login,passwd,role} = req.body
         const smn = await User.build({
@@ -19,7 +21,9 @@ class Functions{
         })
         await smn.save()
         return res.json(smn)
+        
     }
+    */
     async info_user(req,res){
         const answer=await User.findOne({
             where:{
@@ -45,8 +49,8 @@ class Functions{
                 id : req.user.id
             }
         })
-        const token = generateJwt(user.id,user.login,user.password)
-        return res.json(user+token)
+        const token = generateJwt(user.id,user.login,user.role)
+        return res.json({token})
 
     }
     async del_user(req,res){
