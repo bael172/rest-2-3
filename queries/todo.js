@@ -130,7 +130,6 @@ class Queries {
             })
             console.log("userId=",req.user.id)
             console.log("check1.length=",check1.length)
-            console.log("check2.length=",check2.length)
             console.log("check1 is array?",Array.isArray(check1))
             console.log("check2 is Array?",Array.isArray(check2))
             if(check1.length!==0)
